@@ -1,0 +1,1566 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Recyclage - Nexans</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #050611;
+      --fg: #f7f7ff;
+      --muted: #a1a4c2;
+      --accent: #ffb300;
+      --accent-soft: rgba(255, 179, 0, 0.12);
+      --danger: #ff4b81;
+      --card-bg: rgba(10, 11, 30, 0.96);
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --radius-lg: 18px;
+      --radius-md: 12px;
+      --shadow-soft: 0 22px 60px rgba(0, 0, 0, 0.6);
+      --trans-fast: 0.18s ease-out;
+      --trans-med: 0.28s ease-out;
+      --font-display: "Space Grotesk", system-ui, sans-serif;
+      --font-body: "IBM Plex Sans", system-ui, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: radial-gradient(circle at 10% 0%, #11162e 0, #050611 45%, #000000 100%);
+      color: var(--fg);
+      font-family: var(--font-body);
+      -webkit-font-smoothing: antialiased;
+      scroll-behavior: smooth;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: -60px;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 0 0, rgba(255, 179, 0, 0.16) 0, transparent 55%),
+        radial-gradient(circle at 100% 100%, rgba(102, 204, 255, 0.18) 0, transparent 60%);
+      mix-blend-mode: screen;
+      opacity: 0.9;
+      z-index: -2;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 160 160' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='noStitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.16'/%3E%3C/svg%3E");
+      mix-blend-mode: soft-light;
+      opacity: 0.9;
+      z-index: -1;
+    }
+
+    main {
+      min-height: 100vh;
+      padding: 1.1rem 1.1rem 2rem;
+      max-width: 1120px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1.1rem;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 0.9rem 1rem;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      backdrop-filter: blur(22px);
+      background:
+        radial-gradient(circle at 0 0, rgba(255, 179, 0, 0.2) 0, transparent 55%),
+        radial-gradient(circle at 100% 0, rgba(102, 204, 255, 0.2) 0, transparent 55%),
+        rgba(3, 5, 22, 0.9);
+      box-shadow: 0 14px 40px rgba(0, 0, 0, 0.7);
+      position: relative; /* Removed sticky */
+      z-index: 10;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .brand svg {
+      flex-shrink: 0;
+      width: 120px;
+      height: 50px;
+    }
+
+    .brand-text h1 {
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      margin: 0;
+    }
+
+    .brand-text span {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--muted);
+    }
+
+    .header-meta {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 0.25rem;
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+
+    .pill {
+      border-radius: 999px;
+      padding: 0.25rem 0.7rem;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      background: rgba(14, 16, 36, 0.9);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+    }
+
+    .pill-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: #00d27f;
+      box-shadow: 0 0 0 3px rgba(0, 210, 127, 0.3);
+    }
+
+    .pill-secondary {
+      border-color: rgba(255, 255, 255, 0.1);
+      background: rgba(5, 7, 24, 0.9);
+    }
+
+    @media (max-width: 700px) {
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+        border-radius: 22px;
+      }
+      .header-meta {
+        align-items: flex-start;
+      }
+    }
+
+    section {
+      border-radius: var(--radius-lg);
+      background: var(--card-bg);
+      border: 1px solid var(--border-subtle);
+      box-shadow: var(--shadow-soft);
+      padding: 1.1rem 1.1rem 1rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    section::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background: radial-gradient(circle at 10% 0, rgba(255, 179, 0, 0.18) 0, transparent 55%);
+      mix-blend-mode: soft-light;
+      opacity: 0;
+      transition: opacity var(--trans-med);
+      pointer-events: none;
+    }
+
+    section:hover::before {
+      opacity: 1;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      margin-bottom: 0.9rem;
+    }
+
+    .section-title {
+      font-family: var(--font-display);
+      font-size: 0.95rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .badge {
+      font-size: 0.6rem;
+      border-radius: 999px;
+      padding: 0.15rem 0.55rem;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--muted);
+    }
+
+    .section-subtitle {
+      font-size: 0.75rem;
+      color: var(--muted);
+      max-width: 320px;
+      line-height: 1.4;
+    }
+
+    .tagline {
+      font-size: 0.7rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+    }
+
+    .tagline strong {
+      color: var(--accent);
+    }
+
+    label {
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      display: block;
+      margin-bottom: 0.25rem;
+    }
+
+    .field-row,
+    .field-row-3 {
+      display: grid;
+      gap: 0.8rem;
+      margin-bottom: 0.8rem;
+    }
+
+    .field-row {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .field-row-3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    @media (max-width: 720px) {
+      .field-row,
+      .field-row-3 {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    select,
+    input[type="number"],
+    input[type="text"],
+    input[type="date"] {
+      width: 100%;
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(6, 8, 28, 0.96);
+      color: var(--fg);
+      font-family: var(--font-body);
+      font-size: 0.88rem;
+      padding: 0.55rem 0.65rem;
+      outline: none;
+      transition:
+        border-color var(--trans-fast),
+        box-shadow var(--trans-fast),
+        background var(--trans-fast),
+        transform var(--trans-fast);
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    select:focus,
+    input:focus {
+      border-color: var(--accent);
+      box-shadow:
+        0 0 0 1px rgba(255, 179, 0, 0.5),
+        0 0 0 10px rgba(255, 179, 0, 0.07);
+      transform: translateY(-1px);
+      background: rgba(10, 12, 34, 0.98);
+    }
+
+    select {
+      background-image:
+        linear-gradient(45deg, transparent 50%, var(--muted) 55%),
+        linear-gradient(135deg, var(--muted) 45%, transparent 50%);
+      background-position:
+        calc(100% - 14px) 50%,
+        calc(100% - 9px) 50%;
+      background-size: 6px 6px, 6px 6px;
+      background-repeat: no-repeat;
+      padding-right: 1.8rem;
+    }
+
+    .inline {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      margin-top: 0.3rem;
+    }
+
+    .text-muted {
+      color: var(--muted);
+      font-size: 0.7rem;
+    }
+
+    button {
+      font-family: var(--font-body);
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.78rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      padding: 0.55rem 0.95rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: linear-gradient(120deg, #ffb300, #ff7c4b);
+      color: #130b02;
+      box-shadow: 0 14px 30px rgba(255, 179, 0, 0.35);
+      transition:
+        transform var(--trans-fast),
+        box-shadow var(--trans-fast),
+        filter var(--trans-fast),
+        background-position 0.2s ease-out;
+      background-size: 180% 180%;
+      background-position: 0% 50%;
+    }
+
+    button span.icon {
+      font-size: 0.95rem;
+    }
+
+    button:hover {
+      transform: translateY(-1px) scale(1.01);
+      box-shadow: 0 18px 40px rgba(255, 179, 0, 0.4);
+      background-position: 100% 50%;
+      filter: brightness(1.03);
+    }
+
+    button:active {
+      transform: translateY(0) scale(0.99);
+      box-shadow: 0 10px 24px rgba(255, 179, 0, 0.25);
+      filter: brightness(0.96);
+    }
+
+    button.secondary {
+      background: linear-gradient(120deg, rgba(7, 11, 34, 0.98), rgba(7, 11, 34, 0.98));
+      color: var(--muted);
+      box-shadow: 0 10px 22px rgba(0, 0, 0, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      background-size: 100% 100%;
+    }
+
+    button.secondary:hover {
+      background: linear-gradient(120deg, rgba(11, 15, 42, 0.99), rgba(12, 18, 50, 0.99));
+      box-shadow: 0 14px 30px rgba(0, 0, 0, 0.8);
+      filter: none;
+    }
+
+    button.secondary:active {
+      transform: translateY(1px) scale(0.99);
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.7);
+    }
+
+    .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      justify-content: flex-end;
+      margin-top: 0.4rem;
+    }
+
+    .totals-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.6rem;
+      margin-top: 0.2rem;
+    }
+
+    @media (max-width: 720px) {
+      .totals-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    .stat-card {
+      position: relative;
+      padding: 0.6rem 0.65rem;
+      border-radius: var(--radius-md);
+      background:
+        radial-gradient(circle at 0 0, rgba(255, 179, 0, 0.16) 0, transparent 55%),
+        rgba(7, 9, 32, 0.97);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      overflow: hidden;
+    }
+
+    .stat-card.alt {
+      background:
+        radial-gradient(circle at 100% 0, rgba(102, 204, 255, 0.2) 0, transparent 55%),
+        rgba(7, 9, 32, 0.97);
+    }
+
+    .stat-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.15rem;
+    }
+
+    .stat-value {
+      font-family: var(--font-display);
+      font-size: 0.98rem;
+      letter-spacing: 0.04em;
+    }
+
+    .stat-chip {
+      font-size: 0.6rem;
+      padding: 0.1rem 0.4rem;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 0.3rem;
+      font-size: 0.78rem;
+    }
+
+    /* Hide thead to remove header */
+    thead {
+      display: none;
+    }
+
+    th, td {
+      padding: 0.4rem 0.35rem;
+      text-align: left;
+      white-space: nowrap;
+    }
+
+    tbody tr:nth-child(odd) {
+      background: rgba(7, 9, 32, 0.96);
+    }
+
+    tbody tr:nth-child(even) {
+      background: rgba(5, 7, 26, 0.98);
+    }
+
+    tbody tr:hover {
+      background: rgba(18, 23, 60, 0.99);
+    }
+
+    td {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    td.actions {
+      text-align: right;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      padding: 0.1rem 0.4rem;
+      font-size: 0.80rem;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: var(--muted);
+      background: rgba(8, 11, 34, 0.96);
+    }
+
+    .chip.highlight {
+      border-color: rgba(255, 179, 0, 0.8);
+      color: var(--accent);
+      background: rgba(255, 179, 0, 0.08);
+    }
+
+    .chip.badge-small {
+      padding: 0.06rem 0.32rem;
+      font-size: 1rem;
+    }
+
+    .icon-btn {
+      border-radius: 999px;
+      width: 24px;
+      height: 24px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      background: rgba(6, 8, 28, 0.98);
+      color: var(--muted);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      cursor: pointer;
+      margin-left: 0.2rem;
+      transition:
+        background var(--trans-fast),
+        transform var(--trans-fast),
+        border-color var(--trans-fast),
+        color var(--trans-fast),
+        box-shadow var(--trans-fast);
+    }
+
+    .icon-btn:hover {
+      background: rgba(255, 75, 129, 0.12);
+      border-color: rgba(255, 75, 129, 0.9);
+      color: var(--danger);
+      transform: translateY(-1px);
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.7);
+    }
+
+    .icon-btn:active {
+      transform: translateY(0);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.7);
+    }
+
+    .filters-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+      align-items: center;
+    }
+
+    .filters-row > div {
+      min-width: 130px;
+      flex: 1;
+    }
+
+    .chart-wrapper {
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background:
+        radial-gradient(circle at 100% 0, rgba(102, 204, 255, 0.18) 0, transparent 55%),
+        rgba(7, 9, 32, 0.97);
+      padding: 0.6rem;
+      margin-top: 0.3rem;
+    }
+
+    canvas {
+      width: 100%;
+      max-height: 260px;
+      display: block;
+    }
+
+    .note {
+      font-size: 0.68rem;
+      color: var(--muted);
+      margin-top: 0.4rem;
+      line-height: 1.4;
+    }
+
+    .error-msg {
+      display: none;
+      margin-top: 0.25rem;
+      font-size: 0.7rem;
+      color: var(--danger);
+    }
+
+    .error-msg.visible {
+      display: block;
+    }
+
+    .highlight-strip {
+      position: absolute;
+      inset-inline: -25%;
+      top: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(255, 179, 0, 0.8), transparent);
+      opacity: 0.8;
+    }
+
+    .fade-in {
+      opacity: 0;
+      transform: translateY(12px);
+      animation: enter 0.6s var(--trans-med) forwards;
+    }
+    .delay-1 { animation-delay: 0.08s; }
+    .delay-2 { animation-delay: 0.16s; }
+    .delay-3 { animation-delay: 0.24s; }
+    .delay-4 { animation-delay: 0.32s; }
+
+    @keyframes enter {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+<body>
+<main>
+  <header class="fade-in delay-1" aria-label="En-tête de l'application" style="position: relative;">
+    <div class="brand" style="display: flex; align-items: center; gap: 5rem;">
+      <!-- Logo Nexans SVG inline -->
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 688.43 283.44" width="120" height="50" aria-hidden="true" role="img" focusable="false">
+        <style>
+          .cls-1 { fill: #fafafa; }
+          .cls-2 { fill: #FF1910; }
+        </style>
+        <path class="cls-2" d="M299.39,4.17s-10.9-4.17-25.65-4.17c-26.73,0-40.79,14.59-47.62,23.98-6.46,8.88-10.53,18.13-13.59,30.92-2.93,12.23-3.41,27.52-3.92,39.72-1.27,30.63,1.6,84.53-11.61,84.53-6.78,0-11.42-10.43-12.99-14.44-.64-1.63-5.8-16.63-12.19-44.98-3.97-17.66-13.42-60.21-16.16-69.78-1.26-4.41-4.47-16.1-10.69-26.24-8.16-13.29-22.06-19.99-34.13-19.99s-22.55,8.08-26.52,11.99c-12.11,11.93-16.07,29.34-17.34,36.26-1.38,7.47-3.07,23.07-3.07,23.07-2.43,18.6-6.49,50.83-7.41,57.59-4.74,34.76-14.64,40.37-24.17,43.47-2.24,.73-6.53,1.06-8.01,1.06-6.21,0-11.12-1.8-11.12-1.8-.67-.27-1.92-.76-3.38-.76-.85,0-1.66,.16-2.41,.49-2.01,.88-2.92,2.08-3.23,2.64-3.88,5.97-4.18,12.37-4.18,14.19,0,4.39,2.68,5.86,3.48,6.2,.24,.1,5.74,2.45,13.86,3.7,24.37,3.78,39.62-10.57,43.75-14.59,3.88-3.79,10.59-11.59,15-26.83,2.82-9.72,4.46-19.26,5.71-29.85,.94-7.99,7.07-60.91,8.32-68.32,1.32-7.8,3.32-15.89,7.18-23.3,2.72-5.23,7.38-10.83,14.27-10.83,2.65,0,5.08,.8,7.22,2.4,6.6,4.89,10.55,16.44,11.85,21.43,1.76,6.71,14.36,59.7,16.36,68.93,13.42,62.13,22.46,72.9,34.97,79.13,7.16,3.56,21.22,7.53,33.98-2.54,14.31-11.28,14.69-33.32,15.66-46.69,1-13.78,1.04-24.81,1.11-29.76,.68-49.2,1.09-64.35,14.22-83.33,7.07-10.21,21.57-17.43,45.6-9.99,.59,.19,1.88,.5,2.95,.5,4.66,0,6.6-4.73,7.81-9.44,.82-3.18,3.08-12.33-3.92-14.6"/>
+        <g>
+          <path class="cls-1" d="M277.38,163.13c0,7.77,1.33,12.88,3.79,16.29,3.22,4.17,8.15,6.44,14.58,6.44,7.2,0,14.02-2.08,20.47-4.92,1.32-.57,2.65-.95,3.97-.95,4.74,0,9.28,3.98,9.28,8.9,0,3.61-1.51,6.82-4.92,8.53-9.1,4.35-18.75,6.44-28.8,6.44-10.98,0-20.45-3.6-27.46-10.61-6.82-6.82-10.42-16.29-10.42-27.46v-23.87c0-10.99,3.6-20.46,10.42-27.28,7.01-7.01,16.48-10.61,27.46-10.61s20.65,3.6,27.47,10.61c6.82,6.82,10.6,16.29,10.6,27.28v8.9c0,6.82-5.49,12.32-12.31,12.32h-44.13Zm36.94-18c0-15.72-6.44-23.11-18.57-23.11s-18.37,7.19-18.37,23.11h36.94Z"/>
+          <path class="cls-1" d="M383.22,170.14l-20.08,29.55c-1.9,2.66-4.92,4.17-7.96,4.17-5.11,0-9.85-4.35-9.85-9.85,0-1.89,.58-3.78,1.71-5.49l24.82-35.05-24.25-34.09c-1.14-1.71-1.7-3.6-1.7-5.5,0-5.11,4.35-9.84,9.85-9.84,3.03,0,6.06,1.51,7.95,4.16l19.51,28.6,19.51-28.6c1.89-2.84,5.11-4.16,8.15-4.16,5.3,0,9.66,4.35,9.66,9.84,0,1.9-.58,3.79-1.71,5.5l-24.24,34.09,24.81,35.05c1.33,1.71,1.9,3.6,1.9,5.49,0,5.3-4.55,9.85-10.04,9.85-3.03,0-6.06-1.32-7.95-4.17l-20.09-29.55Z"/>
+          <path class="cls-1" d="M507.05,187.38c0,5.3-3.41,9.85-8.33,11.56-9.29,3.22-20.09,4.92-30.69,4.92-11.56,0-20.65-2.84-27.09-8.33-6.44-5.5-9.85-13.26-9.85-22.54s3.41-16.48,9.85-21.78c6.44-5.49,15.53-8.34,27.09-8.34h19.51v-6.63c0-7.95-5.87-14.21-15.72-14.21-8.9,0-13.82,1.14-20.46,5.11-1.52,.95-3.6,1.7-5.3,1.7-5.11,0-9.28-3.79-9.28-8.53,0-3.41,1.51-6.81,4.73-8.71,10.23-5.88,19.13-7.58,32.77-7.58,21.22,0,32.77,15.35,32.77,32.21v51.14Zm-19.51-26.52h-19.51c-16.48,0-17.43,8.91-17.43,12.13,0,3.41,.95,12.88,17.43,12.88,6.44,0,13.45-.95,19.51-2.46v-22.55Z"/>
+          <path class="cls-1" d="M585.24,140.4c0-11.55-6.82-18.37-18.56-18.37-6.25,0-12.5,.94-18.37,2.46v69.52c0,5.5-4.36,9.85-9.66,9.85s-9.85-4.35-9.85-9.85V120.52c0-5.31,3.22-9.85,8.33-11.56,9.29-3.21,19.32-4.92,29.55-4.92,11.18,0,20.65,3.6,27.47,10.61,6.82,6.82,10.6,16.29,10.6,27.28v52.09c0,5.5-4.36,9.85-9.85,9.85s-9.66-4.35-9.66-9.85v-53.61Z"/>
+          <path class="cls-1" d="M640.69,158.59c-10.23-3.79-18.19-11.75-18.19-25.95,0-16.67,13.83-28.61,32.77-28.61,12.88,0,19.51,1.9,25.76,4.74,3.79,1.52,6.25,4.92,6.25,8.91,0,4.92-3.98,9.09-9.09,9.09-1.33,0-3.22-.38-4.55-.95-4.73-2.27-12.5-3.79-18.75-3.79-7.77,0-12.88,3.79-12.88,10.23,0,4.92,3.78,7.95,7.76,9.28l18.57,6.07c12.5,4.16,20.08,12.69,20.08,26.51,0,16.67-13.45,29.74-33.72,29.74-11.18,0-20.27-2.08-27.28-5.3-3.59-1.71-5.87-4.93-5.87-8.72,0-4.92,4.17-9.47,9.47-9.47,1.33,0,3.03,.57,4.36,1.14,5.12,2.65,11.37,4.35,19.7,4.35,9.1,0,13.83-3.41,13.83-9.85,0-7.01-5.68-9.28-12.69-11.74l-15.53-5.68Z"/>
+        </g>
+      </svg>
+      <div class="brand-text">
+        <h1 style="font-family: var(--font-display); font-size: 1.15rem; letter-spacing: 0.09em; text-transform: uppercase; margin: 0;">
+          Recyclage - Nexans
+        </h1>
+        <span style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.16em; color: var(--muted);">
+          Bennes &amp; Big Bags · Poids net
+        </span>
+      </div>
+    </div>
+    <div class="header-meta">
+      <div class="pill">
+        <span class="pill-dot"></span>
+        Session opérateur unique
+      </div>
+      <div class="pill pill-secondary">
+        Kg uniquement · Export CSV, Excel & PDF
+      </div>
+    </div>
+  </header>
+
+  <!-- Saisie -->
+  <section id="saisie-section" class="fade-in delay-2" aria-labelledby="saisie-titre">
+    <div class="highlight-strip" aria-hidden="true"></div>
+    <div class="section-header">
+      <div>
+        <div id="saisie-titre" class="section-title">
+          Saisie pesée benne / big bag
+          <span class="badge">Câblerie</span>
+        </div>
+        <p class="section-subtitle">
+          1. Choisir le secteur · 2. Choisir la benne ou le big bag (tare affichée)
+          · 3. Entrer le poids brut en kg. Le poids net est calculé automatiquement.
+        </p>
+      </div>
+      <div class="tagline">
+        Triage par <strong>secteur</strong> &amp; <strong>type</strong>
+      </div>
+    </div>
+
+    <form id="entry-form" autocomplete="off">
+      <div class="field-row-3">
+        <div>
+          <label for="sector">Secteur</label>
+          <select id="sector" required>
+            <option value="">— Sélectionner —</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="container">Benne / Big Bag</label>
+          <select id="container" required disabled>
+            <option value="">— Choisir un secteur —</option>
+          </select>
+          <div class="inline">
+            <span class="text-muted" id="tare-info">Tare : — kg</span>
+            <span class="chip badge-small" id="container-type">Type : —</span>
+          </div>
+        </div>
+
+        <div>
+          <label for="wasteType">Type de déchet</label>
+          <input id="wasteType" type="text" readonly placeholder="Auto depuis la benne" />
+          <div class="inline">
+            <span class="text-muted">Benne : tare auto · Big bag : tare 0</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="field-row-3">
+        <div>
+          <label for="grossWeight">Poids brut (kg)</label>
+          <input id="grossWeight" type="number" step="0.01" min="0" placeholder="ex : 482.30" required />
+          <div class="inline">
+            <span class="text-muted">Net = brut – tare</span>
+            <span class="chip badge-small" id="net-preview">Net : — kg</span>
+          </div>
+        </div>
+
+        <div>
+          <label for="date">Date</label>
+          <input id="date" type="date" required />
+          <div class="inline">
+            <span class="text-muted" id="today-label">Aujourd'hui</span>
+          </div>
+        </div>
+
+        <div>
+          <label for="comment">Commentaire (optionnel)</label>
+          <input id="comment" type="text" placeholder="N° lot, info, etc." />
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button type="button" class="secondary" id="reset-form">
+          <span class="icon">⟲</span>
+          Effacer
+        </button>
+        <button type="submit">
+          <span class="icon">➕</span>
+          Ajouter la pesée
+        </button>
+      </div>
+      <p class="error-msg" id="form-error"></p>
+    </form>
+  </section>
+
+  <!-- Totaux & Stats -->
+  <section id="stats-section" class="fade-in delay-3" aria-labelledby="stats-titre">
+    <div class="highlight-strip" aria-hidden="true"></div>
+    <div class="section-header">
+      <div>
+        <div id="stats-titre" class="section-title">
+          Totaux &amp; statistiques
+          <span class="badge">Temps réel</span>
+        </div>
+        <p class="section-subtitle">
+          Suivi global des poids nets enregistrés. Les totaux tiennent compte des
+          filtres appliqués dans l’historique (dates, secteur, type).
+        </p>
+      </div>
+    </div>
+
+    <div class="totals-grid">
+      <div class="stat-card">
+        <div class="stat-label">Total filtré</div>
+        <div class="stat-value" id="total-global">0.00 kg</div>
+        <div class="inline" style="margin-top:0.2rem;">
+          <span class="stat-chip">Poids net (kg)</span>
+        </div>
+      </div>
+      <div class="stat-card alt">
+        <div class="stat-label">Total du jour</div>
+        <div class="stat-value" id="total-today">0.00 kg</div>
+        <div class="inline" style="margin-top:0.2rem;">
+          <span class="stat-chip" id="today-label-2">Aujourd'hui</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Nombre de pesées</div>
+        <div class="stat-value" id="entries-count">0</div>
+        <div class="inline" style="margin-top:0.2rem;">
+          <span class="stat-chip">Lignes filtrées</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="chart-wrapper" aria-label="Répartition par type de déchet">
+      <div class="inline" style="margin-bottom:0.2rem;">
+        <span class="stat-label">Répartition par type</span>
+        <span class="chip badge-small" id="chart-total">Total : 0.00 kg</span>
+      </div>
+      <canvas id="typeChart" height="190"></canvas>
+    </div>
+
+    <p class="note">
+      Astuce iPhone : ouvrir cette page dans Safari, puis “Partager &gt; Ajouter à
+      l’écran d’accueil” pour l’utiliser comme une vraie application, même hors ligne.
+    </p>
+  </section>
+
+  <!-- Historique & Export -->
+  <section id="history-section" class="fade-in delay-4" aria-labelledby="history-titre">
+    <div class="highlight-strip" aria-hidden="true"></div>
+    <div class="section-header">
+      <div>
+        <div id="history-titre" class="section-title">
+          Historique des pesées
+          <span class="badge">Filtres &amp; export</span>
+        </div>
+        <p class="section-subtitle">
+          Toutes les pesées de bennes et big bags. Utiliser les filtres pour cibler
+          une période, un secteur ou un type, puis exporter en CSV, Excel ou PDF.
+        </p>
+      </div>
+      <div class="btn-row">
+        <button type="button" class="secondary" id="export-csv">
+          <span class="icon">⬇</span>
+          Export CSV
+        </button>
+        <button type="button" id="export-xls">
+          <span class="icon">📊</span>
+          Export Excel
+        </button>
+        <button type="button" id="export-pdf">
+          <span class="icon">📄</span>
+          Exporter en PDF
+        </button>
+      </div>
+    </div>
+
+    <div class="filters-row">
+      <div>
+        <label for="filter-from">Du</label>
+        <input type="date" id="filter-from">
+      </div>
+      <div>
+        <label for="filter-to">Au</label>
+        <input type="date" id="filter-to">
+      </div>
+      <div>
+        <label for="filter-sector">Secteur</label>
+        <select id="filter-sector">
+          <option value="">Tous</option>
+        </select>
+      </div>
+      <div>
+        <label for="filter-type">Type</label>
+        <select id="filter-type">
+          <option value="">Tous</option>
+          <option>Alu Nu</option>
+          <option>Isolé</option>
+          <option>Armé</option>
+          <option>Alu Sous Plomb</option>
+          <option>Ferraille</option>
+          <option>Dépouille PE</option>
+          <option>Dépouille PVC</option>
+          <option>Dépouille Plomb</option>
+          <option>Aiguillettes</option>
+          <option>Purge PE</option>
+          <option>Purge PVC</option>
+        </select>
+      </div>
+    </div>
+
+    <div style="overflow:auto; max-height: 320px; border-radius: 12px; border:1px solid rgba(255,255,255,0.14);">
+      <table aria-label="Liste des pesées">
+        <thead><!-- En-tête caché --></thead>
+        <tbody id="entries-body"></tbody>
+      </table>
+    </div>
+
+    <p class="note">
+      Les données sont stockées dans le navigateur (localStorage). Penser à
+      exporter régulièrement les CSV / Excel / PDF pour archivage ou sauvegarde externe.
+    </p>
+  </section>
+</main>
+
+<!-- Librairies externes -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+<script>
+const SECTEURS = {
+  "Tréfilage": [
+    { id: "T-AN", type: "Alu Nu", tare: 194, label: "Alu Nu – 194 kg" },
+    { id: "T-FER", type: "Ferraille", tare: 553, label: "Ferraille – 553 kg" },
+    { id: "T-BB-AIG", type: "Aiguillettes", tare: 0, label: "Big Bag Aiguillettes" }
+  ],
+  "530": [
+    { id: "530-AN", type: "Alu Nu", tare: 160, label: "Alu Nu – 160 kg" }
+  ],
+  "118": [
+    { id: "118-AN", type: "Alu Nu", tare: 160, label: "Alu Nu – 160 kg" }
+  ],
+  "Bagger": [
+    { id: "BAG-AN", type: "Alu Nu", tare: 155, label: "Alu Nu – 155 kg" }
+  ],
+  "RL": [
+    { id: "RL-AN", type: "Alu Nu", tare: 198, label: "Alu Nu – 198 kg" },
+    { id: "RL-ARM", type: "Armé", tare: 198, label: "Armé – 198 kg" }
+  ],
+  "Bema": [
+    { id: "BEMA-AN", type: "Alu Nu", tare: 120, label: "Alu Nu – 120 kg" }
+  ],
+  "Presse à Plomb": [
+    { id: "PAP-ARM", type: "Armé", tare: 214, label: "Armé – 214 kg" },
+    { id: "PAP-ASP", type: "Alu Sous Plomb", tare: 216, label: "Alu Sous Plomb – 216 kg" }
+  ],
+  "Sket": [
+    { id: "SKET-AN1", type: "Alu Nu", tare: 141, label: "Alu Nu – 141 kg" },
+    { id: "SKET-AN2", type: "Alu Nu", tare: 146, label: "Alu Nu – 146 kg" },
+    { id: "SKET-AN3", type: "Alu Nu", tare: 136, label: "Alu Nu – 136 kg" },
+    { id: "SKET-AN4", type: "Alu Nu", tare: 200, label: "Alu Nu – 200 kg" }
+  ],
+  "158": [
+    { id: "158-AN", type: "Alu Nu", tare: 212, label: "Alu Nu – 212 kg" },
+    { id: "158-ISO", type: "Isolé", tare: 194, label: "Isolé – 194 kg" },
+    { id: "158-ASP", type: "Alu Sous Plomb", tare: 220, label: "Alu Sous Plomb – 220 kg" },
+    { id: "158-FER", type: "Ferraille", tare: 196, label: "Ferraille – 196 kg" },
+    { id: "158-ARM", type: "Armé", tare: 198, label: "Armé – 198 kg" }
+  ],
+  "Mono": [
+    { id: "MONO-AN", type: "Alu Nu", tare: 560, label: "Alu Nu – 560 kg" },
+    { id: "MONO-ISO", type: "Isolé", tare: 202, label: "Isolé – 202 kg" },
+    { id: "MONO-BB-PPE", type: "Purge PE", tare: 0, label: "Big Bag Purge PE" }
+  ],
+  "153/156": [
+    { id: "153156-AN", type: "Alu Nu", tare: 194, label: "Alu Nu – 194 kg" },
+    { id: "153156-ASP", type: "Alu Sous Plomb", tare: 230, label: "Alu Sous Plomb – 230 kg" },
+    { id: "153156-ISO", type: "Isolé", tare: 160, label: "Isolé – 160 kg" },
+    { id: "153156-FER", type: "Ferraille", tare: 196, label: "Ferraille – 196 kg" }
+  ],
+  "153": [
+    { id: "153-FER", type: "Ferraille", tare: 160, label: "Ferraille – 160 kg" }
+  ],
+  "156": [
+    { id: "156-FER", type: "Ferraille", tare: 160, label: "Ferraille – 160 kg" }
+  ],
+  "Maintenance": [
+    { id: "MAINT-FER", type: "Ferraille", tare: 240, label: "Ferraille – 240 kg" }
+  ],
+  "7712": [
+    { id: "7712-DPE1", type: "Dépouille PE", tare: 146, label: "Dépouille PE – 146 kg" },
+    { id: "7712-DPE2", type: "Dépouille PE", tare: 147, label: "Dépouille PE – 147 kg" },
+    { id: "7712-DPE3", type: "Dépouille PE", tare: 143, label: "Dépouille PE – 143 kg" },
+    { id: "7712-DPVC1", type: "Dépouille PVC", tare: 146, label: "Dépouille PVC – 146 kg" },
+    { id: "7712-DPVC2", type: "Dépouille PVC", tare: 147, label: "Dépouille PVC – 147 kg" },
+    { id: "7712-DPVC3", type: "Dépouille PVC", tare: 143, label: "Dépouille PVC – 143 kg" },
+    { id: "7712-DPVC4", type: "Dépouille PVC", tare: 600, label: "Dépouille PVC – 600 kg" }
+  ],
+  "108": [
+    { id: "108-ISO", type: "Isolé", tare: 194, label: "Isolé – 194 kg" },
+    { id: "108-ARM", type: "Armé", tare: 160, label: "Armé – 160 kg" }
+  ],
+  "Labo": [
+    { id: "LABO-ARM", type: "Armé", tare: 194, label: "Armé – 194 kg" },
+    { id: "LABO-AN", type: "Alu Nu", tare: 196, label: "Alu Nu – 196 kg" }
+  ],
+  "PCV4": [
+    { id: "PCV4-ISO", type: "Isolé", tare: 164, label: "Isolé – 164 kg" },
+    { id: "PCV4-ARM", type: "Armé", tare: 160, label: "Armé – 160 kg" }
+  ],
+  "PCV3": [
+    { id: "PCV3-ARM1", type: "Armé", tare: 160, label: "Armé – 160 kg" },
+    { id: "PCV3-ARM2", type: "Armé", tare: 164, label: "Armé – 164 kg" }
+  ],
+  "Cellules": [
+    { id: "CELL-FER", type: "Ferraille", tare: 160, label: "Ferraille – 160 kg" },
+    { id: "CELL-DPVC", type: "Dépouille PVC", tare: 160, label: "Dépouille PVC – 160 kg" },
+    { id: "CELL-ISO", type: "Isolé", tare: 160, label: "Isolé – 160 kg" },
+    { id: "CELL-AN", type: "Alu Nu", tare: 160, label: "Alu Nu – 160 kg" },
+    { id: "CELL-ASP", type: "Alu Sous Plomb", tare: 160, label: "Alu Sous Plomb – 160 kg" }
+  ],
+  "PCV": [
+    { id: "PCV-ARM", type: "Armé", tare: 200, label: "Armé – 200 kg" },
+    { id: "PCV-ISO", type: "Isolé", tare: 200, label: "Isolé – 200 kg" },
+    { id: "PCV-AN", type: "Alu Nu", tare: 200, label: "Alu Nu – 200 kg" },
+    { id: "PCV-BB-PPVC", type: "Purge PVC", tare: 0, label: "Big Bag Purge PVC" }
+  ],
+  "Couronneuse": [
+    { id: "COUR-ARM1", type: "Armé", tare: 400, label: "Armé – 400 kg" },
+    { id: "COUR-ARM2", type: "Armé", tare: 98, label: "Armé – 98 kg" }
+  ],
+  "Brondel": [
+    { id: "BRON-ARM", type: "Armé", tare: 160, label: "Armé – 160 kg" },
+    { id: "BRON-ISO1", type: "Isolé", tare: 160, label: "Isolé – 160 kg" },
+    { id: "BRON-ISO2", type: "Isolé", tare: 536, label: "Isolé – 536 kg" }
+  ],
+  "Cisaille": [
+    { id: "CIS-ARM", type: "Armé", tare: 160, label: "Armé – 160 kg" },
+    { id: "CIS-ISO", type: "Isolé", tare: 164, label: "Isolé – 164 kg" },
+    { id: "CIS-AN", type: "Alu Nu", tare: 164, label: "Alu Nu – 164 kg" },
+    { id: "CIS-ASP", type: "Alu Sous Plomb", tare: 160, label: "Alu Sous Plomb – 160 kg" }
+  ]
+};
+
+const sectorEl = document.getElementById("sector");
+const containerEl = document.getElementById("container");
+const tareInfoEl = document.getElementById("tare-info");
+const containerTypeEl = document.getElementById("container-type");
+const wasteTypeEl = document.getElementById("wasteType");
+const grossWeightEl = document.getElementById("grossWeight");
+const netPreviewEl = document.getElementById("net-preview");
+const dateEl = document.getElementById("date");
+const commentEl = document.getElementById("comment");
+const formErrorEl = document.getElementById("form-error");
+
+const filterFromEl = document.getElementById("filter-from");
+const filterToEl = document.getElementById("filter-to");
+const filterSectorEl = document.getElementById("filter-sector");
+const filterTypeEl = document.getElementById("filter-type");
+
+const totalGlobalEl = document.getElementById("total-global");
+const totalTodayEl = document.getElementById("total-today");
+const entriesCountEl = document.getElementById("entries-count");
+const chartTotalEl = document.getElementById("chart-total");
+const entriesBody = document.getElementById("entries-body");
+
+const exportCsvBtn = document.getElementById("export-csv");
+const exportXlsBtn = document.getElementById("export-xls");
+const exportPdfBtn = document.getElementById("export-pdf");
+
+const STORAGE_KEY = "cablerie_dechets_entries_v1";
+
+function loadEntries() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return [];
+    const data = JSON.parse(raw);
+    return Array.isArray(data) ? data : [];
+  } catch (e) {
+    console.error("Erreur lecture storage", e);
+    return [];
+  }
+}
+
+function saveEntries(list) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+}
+
+let entries = loadEntries();
+let chartInstance = null;
+
+(function initDates() {
+  const now = new Date();
+  const yyyy = now.getFullYear();
+  const mm = String(now.getMonth() + 1).padStart(2, "0");
+  const dd = String(now.getDate()).padStart(2, "0");
+  const iso = `${yyyy}-${mm}-${dd}`;
+  dateEl.value = iso;
+  filterFromEl.value = iso;
+  filterToEl.value = iso;
+  const label = `Aujourd'hui (${dd}/${mm}/${String(yyyy).slice(-2)})`;
+  document.getElementById("today-label").textContent = label;
+  document.getElementById("today-label-2").textContent = label;
+})();
+
+function populateAndSortSectors() {
+  const sectorSelect = document.getElementById("sector");
+  const filterSectorSelect = document.getElementById("filter-sector");
+
+  const sortedSectors = Object.keys(SECTEURS).sort((a, b) => a.localeCompare(b));
+
+  sectorSelect.innerHTML = '<option value="">— Sélectionner —</option>';
+  filterSectorSelect.innerHTML = '<option value="">Tous</option>';
+
+  sortedSectors.forEach(sector => {
+    const option1 = document.createElement("option");
+    option1.value = sector;
+    option1.textContent = sector;
+    sectorSelect.appendChild(option1);
+
+    const option2 = document.createElement("option");
+    option2.value = sector;
+    option2.textContent = sector;
+    filterSectorSelect.appendChild(option2);
+  });
+}
+
+populateAndSortSectors();
+
+sectorEl.addEventListener("change", () => {
+  const secteur = sectorEl.value;
+  containerEl.innerHTML = "";
+  wasteTypeEl.value = "";
+  tareInfoEl.textContent = "Tare : — kg";
+  containerTypeEl.textContent = "Type : —";
+  containerEl.disabled = true;
+
+  if (!secteur || !SECTEURS[secteur]) {
+    return;
+  }
+
+  containerEl.disabled = false;
+  const placeholder = document.createElement("option");
+  placeholder.value = "";
+  placeholder.textContent = "— Sélectionner benne / big bag —";
+  containerEl.appendChild(placeholder);
+
+  const containers = SECTEURS[secteur].slice().sort((a, b) => a.label.localeCompare(b.label));
+
+  containers.forEach(c => {
+    const opt = document.createElement("option");
+    opt.value = c.id;
+    opt.textContent = c.label;
+    opt.dataset.tare = c.tare;
+    opt.dataset.type = c.type;
+    containerEl.appendChild(opt);
+  });
+});
+
+containerEl.addEventListener("change", () => {
+  const opt = containerEl.options[containerEl.selectedIndex];
+  if (!opt || !opt.dataset.tare) {
+    tareInfoEl.textContent = "Tare : — kg";
+    wasteTypeEl.value = "";
+    containerTypeEl.textContent = "Type : —";
+    updateNetPreview();
+    return;
+  }
+  const tare = parseFloat(opt.dataset.tare);
+  const type = opt.dataset.type;
+  tareInfoEl.textContent = `Tare : ${tare.toFixed(2)} kg`;
+  wasteTypeEl.value = type;
+  const mode = tare === 0 ? "Big Bag (tare 0)" : "Benne (tare auto)";
+  containerTypeEl.textContent = `Type : ${type} · ${mode}`;
+  updateNetPreview();
+});
+
+function getCurrentTare() {
+  const opt = containerEl.options[containerEl.selectedIndex];
+  if (!opt || !opt.dataset.tare) return 0;
+  const t = parseFloat(opt.dataset.tare);
+  return isNaN(t) ? 0 : t;
+}
+
+function updateNetPreview() {
+  const brut = parseFloat((grossWeightEl.value || "").replace(",", "."));
+  if (isNaN(brut) || brut <= 0) {
+    netPreviewEl.textContent = "Net : — kg";
+    return;
+  }
+  const tare = getCurrentTare();
+  const net = Math.max(brut - tare, 0);
+  netPreviewEl.textContent = `Net : ${net.toFixed(2)} kg`;
+}
+
+grossWeightEl.addEventListener("input", updateNetPreview);
+
+document.getElementById("entry-form").addEventListener("submit", (e) => {
+  e.preventDefault();
+  formErrorEl.textContent = "";
+  formErrorEl.classList.remove("visible");
+
+  const secteur = sectorEl.value;
+  const contId = containerEl.value;
+  const opt = containerEl.options[containerEl.selectedIndex];
+  const date = dateEl.value;
+  const comment = commentEl.value.trim();
+  const brut = parseFloat((grossWeightEl.value || "").replace(",", "."));
+
+  if (!secteur || !contId || !opt || !opt.dataset.type || !date || isNaN(brut) || brut <= 0) {
+    formErrorEl.textContent = "Compléter secteur, benne/big bag, date et un poids brut valide.";
+    formErrorEl.classList.add("visible");
+    return;
+  }
+
+  const tare = parseFloat(opt.dataset.tare) || 0;
+  const type = opt.dataset.type;
+  const net = Math.max(brut - tare, 0);
+
+  const entry = {
+    id: Date.now(),
+    date,
+    sector: secteur,
+    containerId: contId,
+    containerLabel: opt.textContent,
+    wasteType: type,
+    gross: brut,
+    tare,
+    net,
+    comment
+  };
+
+  entries.push(entry);
+  saveEntries(entries);
+  renderAll();
+
+  // Vider tous les champs
+  sectorEl.value = "";
+  containerEl.innerHTML = '<option value="">— Choisir un secteur —</option>';
+  containerEl.disabled = true;
+  tareInfoEl.textContent = "Tare : — kg";
+  containerTypeEl.textContent = "Type : —";
+  wasteTypeEl.value = "";
+  grossWeightEl.value = "";
+  commentEl.value = "";
+
+  // Remettre la date à aujourd'hui
+  const now = new Date();
+  const yyyy = now.getFullYear();
+  const mm = String(now.getMonth() + 1).padStart(2, "0");
+  const dd = String(now.getDate()).padStart(2, "0");
+  dateEl.value = `${yyyy}-${mm}-${dd}`;
+
+  updateNetPreview();
+});
+
+document.getElementById("reset-form").addEventListener("click", () => {
+  sectorEl.value = "";
+  containerEl.innerHTML = '<option value="">— Choisir un secteur —</option>';
+  containerEl.disabled = true;
+  tareInfoEl.textContent = "Tare : — kg";
+  containerTypeEl.textContent = "Type : —";
+  wasteTypeEl.value = "";
+  grossWeightEl.value = "";
+  commentEl.value = "";
+  formErrorEl.textContent = "";
+  formErrorEl.classList.remove("visible");
+  updateNetPreview();
+});
+
+[filterFromEl, filterToEl, filterSectorEl, filterTypeEl].forEach(el => {
+  el.addEventListener("change", () => renderAll());
+});
+
+function applyFilters(list) {
+  const from = filterFromEl.value;
+  const to = filterToEl.value;
+  const sec = filterSectorEl.value;
+  const type = filterTypeEl.value;
+
+  return list.filter(e => {
+    if (from && e.date < from) return false;
+    if (to && e.date > to) return false;
+    if (sec && e.sector !== sec) return false;
+    if (type && e.wasteType !== type) return false;
+    return true;
+  });
+}
+
+function renderTable() {
+  const filtered = applyFilters(entries);
+  entriesBody.innerHTML = "";
+
+  if (!filtered.length) {
+    const tr = document.createElement("tr");
+    const td = document.createElement("td");
+    td.colSpan = 9;
+    td.textContent = "Aucune pesée avec les filtres actuels.";
+    td.style.textAlign = "center";
+    td.style.padding = "0.7rem";
+    td.style.color = "#a1a4c2";
+    tr.appendChild(td);
+    entriesBody.appendChild(tr);
+    return;
+  }
+function formatDateDMY(dateStr) {
+  if (!dateStr) return "";
+  const parts = dateStr.split("-");
+  if (parts.length !== 3) return dateStr;
+  return `${parts[2]}-${parts[1]}-${parts[0]}`;
+}
+
+  filtered
+    .slice()
+    .sort((a, b) => (a.date === b.date ? a.id - b.id : a.date.localeCompare(b.date)))
+    .forEach(e => {
+      const tr = document.createElement("tr");
+
+      const dateTd = document.createElement("td");
+      dateTd.textContent = formatDateDMY(e.date);
+
+      tr.appendChild(dateTd);
+
+      const sectorTd = document.createElement("td");
+      sectorTd.textContent = e.sector;
+      tr.appendChild(sectorTd);
+
+      const typeTd = document.createElement("td");
+      typeTd.innerHTML = `<span class="chip">${e.wasteType}</span>`;
+      tr.appendChild(typeTd);
+
+      const contTd = document.createElement("td");
+      contTd.textContent = e.containerLabel || e.containerId;
+      tr.appendChild(contTd);
+
+      const brutTd = document.createElement("td");
+      brutTd.textContent = e.gross.toFixed(2);
+      tr.appendChild(brutTd);
+
+      const tareTd = document.createElement("td");
+      tareTd.textContent = e.tare.toFixed(2);
+      tr.appendChild(tareTd);
+
+      const netTd = document.createElement("td");
+      netTd.innerHTML = `<span class="chip highlight">${e.net.toFixed(2)} kg</span>`;
+      tr.appendChild(netTd);
+
+      const comTd = document.createElement("td");
+      comTd.textContent = e.comment || "";
+      tr.appendChild(comTd);
+
+      const actTd = document.createElement("td");
+      actTd.className = "actions";
+      const delBtn = document.createElement("button");
+      delBtn.type = "button";
+      delBtn.className = "icon-btn";
+      delBtn.title = "Supprimer la ligne";
+      delBtn.textContent = "✕";
+      delBtn.addEventListener("click", () => {
+        if (confirm("Supprimer cette pesée ?")) {
+          entries = entries.filter(x => x.id !== e.id);
+          saveEntries(entries);
+          renderAll();
+        }
+      });
+      actTd.appendChild(delBtn);
+      tr.appendChild(actTd);
+
+      entriesBody.appendChild(tr);
+    });
+}
+
+function renderTotals() {
+  const filtered = applyFilters(entries);
+  const totalNet = filtered.reduce((s, e) => s + e.net, 0);
+  totalGlobalEl.textContent = `${totalNet.toFixed(2)} kg`;
+  entriesCountEl.textContent = filtered.length;
+
+  const today = dateEl.value;
+  const totalToday = filtered
+    .filter(e => e.date === today)
+    .reduce((s, e) => s + e.net, 0);
+  totalTodayEl.textContent = `${totalToday.toFixed(2)} kg`;
+
+  chartTotalEl.textContent = `Total : ${totalNet.toFixed(2)} kg`;
+}
+
+function renderChart() {
+  const filtered = applyFilters(entries);
+  const byType = {};
+  filtered.forEach(e => {
+    byType[e.wasteType] = (byType[e.wasteType] || 0) + e.net;
+  });
+
+  const labels = Object.keys(byType);
+  const data = labels.map(l => byType[l]);
+
+  const COLORS_BY_TYPE = {
+    "Alu Nu": "rgba(0, 128, 0, 0.8)",
+    "Isolé": "rgba(0, 0, 255, 0.8)",
+    "Armé": "rgba(255, 0, 0, 0.8)",
+    "Alu Sous Plomb": "rgba(255, 255, 0, 0.8)",
+    "Ferraille": "rgba(128, 128, 128, 0.8)",
+    "Dépouille PE": "rgba(255, 165, 0, 0.8)",
+    "Dépouille PVC": "rgba(0, 0, 0, 0.8)",
+    "Dépouille Plomb": "rgba(255, 255, 255, 0.8)",
+    "Purge PE": "rgba(57, 255, 20, 0.9)",
+    "Purge PVC": "rgba(255, 20, 147, 0.9)",
+    "Aiguillettes": "rgba(255, 105, 180, 0.8)"
+  };
+
+  const ctx = document.getElementById("typeChart").getContext("2d");
+  if (chartInstance) chartInstance.destroy();
+
+  chartInstance = new Chart(ctx, {
+    type: "bar",
+    data: {
+      labels,
+      datasets: [{
+        label: "Poids net (kg)",
+        data,
+        borderRadius: 8,
+        backgroundColor: labels.map(label => COLORS_BY_TYPE[label] || "rgba(255, 179, 0, 0.85)"),
+        borderColor: "rgba(0,0,0,0.4)",
+        borderWidth: 1
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        x: { ticks: { color: "#a1a4c2", font: { size: 10 } }, grid: { display: false } },
+        y: { ticks: { color: "#a1a4c2", font: { size: 10 } }, grid: { color: "rgba(255,255,255,0.08)" }, beginAtZero: true }
+      },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: "rgba(6,8,28,0.96)",
+          borderColor: "rgba(255,255,255,0.2)",
+          borderWidth: 1,
+          titleColor: "#f7f7ff",
+          bodyColor: "#f7f7ff",
+          padding: 8,
+          callbacks: { label: ctx => ` ${ctx.parsed.y.toFixed(2)} kg` }
+        }
+      }
+    }
+  });
+}
+
+function exportCSV() {
+  const filtered = applyFilters(entries);
+  if (!filtered.length) {
+    alert("Aucune donnée à exporter avec les filtres actuels.");
+    return;
+  }
+
+  const header = [
+    "Date",
+    "Secteur",
+    "Type",
+    "Benne/Big bag",
+    "Poids brut (kg)",
+    "Tare (kg)",
+    "Poids net (kg)",
+    "Commentaire"
+  ];
+
+  const rows = filtered.map(e => [
+    e.date,
+    e.sector,
+    e.wasteType,
+    e.containerLabel || e.containerId,
+    e.gross.toFixed(2),
+    e.tare.toFixed(2),
+    e.net.toFixed(2),
+    (e.comment || "").replace(/"/g, '""')
+  ]);
+
+  const csvLines = [
+    header.join(";"),
+    ...rows.map(r => r.map(v => `"${v}"`).join(";"))
+  ];
+
+  const blob = new Blob(["\uFEFF" + csvLines.join("\n")], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  const now = new Date();
+  const yyyy = now.getFullYear();
+  const mm = String(now.getMonth() + 1).padStart(2, "0");
+  const dd = String(now.getDate()).padStart(2, "0");
+  a.download = `dechets_cablerie_${yyyy}${mm}${dd}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function exportXLS() {
+  const filtered = applyFilters(entries);
+  if (!filtered.length) {
+    alert("Aucune donnée à exporter avec les filtres actuels.");
+    return;
+  }
+
+  let tableHTML = `
+    <table border="1">
+      <tr>
+        <th>Date</th>
+        <th>Secteur</th>
+        <th>Type</th>
+        <th>Benne/Big bag</th>
+        <th>Poids brut (kg)</th>
+        <th>Tare (kg)</th>
+        <th>Poids net (kg)</th>
+        <th>Commentaire</th>
+      </tr>
+  `;
+
+  filtered.forEach(e => {
+    tableHTML += `
+      <tr>
+        <td>${e.date}</td>
+        <td>${e.sector}</td>
+        <td>${e.wasteType}</td>
+        <td>${(e.containerLabel || e.containerId).replace(/</g, "&lt;")}</td>
+        <td>${e.gross.toFixed(2)}</td>
+        <td>${e.tare.toFixed(2)}</td>
+        <td>${e.net.toFixed(2)}</td>
+        <td>${(e.comment || "").replace(/</g, "&lt;").replace(/>/g, "&gt;")}</td>
+      </tr>
+    `;
+  });
+
+  tableHTML += "</table>";
+
+  const blob = new Blob([tableHTML], { type: "application/vnd.ms-excel" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  const now = new Date();
+  const yyyy = now.getFullYear();
+  const mm = String(now.getMonth() + 1).padStart(2, "0");
+  const dd = String(now.getDate()).padStart(2, "0");
+  a.download = `dechets_cablerie_${yyyy}${mm}${dd}.xls`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+exportCsvBtn.addEventListener("click", exportCSV);
+exportXlsBtn.addEventListener("click", exportXLS);
+
+exportPdfBtn.addEventListener("click", async () => {
+  const { jsPDF } = window.jspdf;
+
+  const pdf = new jsPDF({
+    orientation: "portrait",
+    unit: "pt",
+    format: "a4"
+  });
+
+  // Capturer le tableau (avec filtres)
+  const tableElement = document.querySelector("#history-section table");
+  const tableCanvas = await html2canvas(tableElement, {
+    scale: 2,
+    useCORS: true,
+    backgroundColor: "#050611"
+  });
+  const tableImgData = tableCanvas.toDataURL("image/png");
+
+  // Capturer le graphique
+  const chartCanvas = document.getElementById("typeChart");
+  const chartImgData = chartCanvas.toDataURL("image/png");
+
+  const pdfWidth = pdf.internal.pageSize.getWidth();
+  const pdfHeight = pdf.internal.pageSize.getHeight();
+
+  // Ajouter image tableau
+  const tableImgProps = pdf.getImageProperties(tableImgData);
+  const tableImgWidth = pdfWidth - 40;
+  const tableImgHeight = (tableImgProps.height * tableImgWidth) / tableImgProps.width;
+  pdf.addImage(tableImgData, "PNG", 20, 20, tableImgWidth, tableImgHeight);
+
+  // Ajouter image graphique sur nouvelle page si dépasse la hauteur
+  const chartImgProps = pdf.getImageProperties(chartImgData);
+  const chartImgWidth = pdfWidth - 40;
+  const chartImgHeight = (chartImgProps.height * chartImgWidth) / chartImgProps.width;
+
+  if (tableImgHeight + 40 + chartImgHeight > pdfHeight) {
+    pdf.addPage();
+    pdf.addImage(chartImgData, "PNG", 20, 20, chartImgWidth, chartImgHeight);
+  } else {
+    pdf.addImage(chartImgData, "PNG", 20, tableImgHeight + 40, chartImgWidth, chartImgHeight);
+  }
+
+  pdf.save("dechets_cablerie.pdf");
+});
+
+function renderAll() {
+  renderTable();
+  renderTotals();
+  renderChart();
+}
+
+renderAll();
+</script>
+</body>
+</html>
