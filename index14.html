@@ -444,6 +444,58 @@
       justify-content: flex-end;
     }
 
+    .field-row {
+      display: flex;
+      gap: 16px; /* espace entre les deux champs */
+      flex-wrap: wrap; /* permet de passer à la ligne si trop étroit */
+    }
+
+    .field-row > div {
+      flex: 1 1 180px; /* chaque champ prend au moins 180px et s’adapte */
+      min-width: 140px; /* largeur minimale pour éviter trop petit */
+      display: flex;
+      flex-direction: column;
+    }
+
+    .field-row label {
+      margin-bottom: 6px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .field-row input[type="number"] {
+      padding: 8px 10px;
+      font-size: 0.9rem;
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(255,255,255,0.16);
+      background: rgba(4,6,14,0.85);
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.18s ease, box-shadow 0.18s ease;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .field-row input[type="number"]:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(255,77,77,0.55);
+      background: rgba(6,10,22,0.95);
+    }
+
+/* Pour écrans plus petits (tablettes, mobiles) */
+@media (max-width: 820px) {
+  .field-row {
+    flex-direction: column;
+  }
+  .field-row > div {
+    min-width: auto;
+    flex: 1 1 100%;
+  }
+}
+
+
+
     .legend-item {
       display: inline-flex;
       align-items: center;
@@ -537,14 +589,21 @@
     /* Container Big Bags sous graphique type */
     #bigBagContainer {
       display: flex;
+      flex-wrap: wrap; /* permet retour à la ligne */
       justify-content: center;
+      gap: 16px; /* espace entre les items */
       margin-top: 15px;
     }
-    #bigBagContainer div {
+    #bigBagContainer > div {
+      max-width: 150px; /* limite la largeur pour éviter chevauchement */
       text-align: center;
       color: #ddd;
       font-size: 0.85rem;
       user-select: none;
+      display: flex;
+      flex-direction: initial;
+      align-items: center;
+      gap: 6px;
     }
     #bigBagContainer img {
       width: 80px;
@@ -566,11 +625,11 @@
       font-weight: 600;
     }
     #bigBagContainer .color-dot {
-      display: inline-block;
       width: 12px;
       height: 12px;
       border-radius: 50%;
-      vertical-align: middle;
+      margin-bottom: 4px;
+      flex-shrink: 0;
     }
 
     /* Button Hamburger */
@@ -877,6 +936,18 @@
         width: 100%;
       }
     }
+
+    @media (max-width: 820px) {
+      #bigBagContainer {
+        flex-direction: initial;
+        gap: 12px;
+      }
+
+      #bigBagContainer > div {
+        max-width: 100%;
+      }
+    }
+
 
     /* Pour les écrans plus petits (tablettes, mobiles) */
 @media (max-width: 820px) {
@@ -2122,7 +2193,7 @@ window.addEventListener('DOMContentLoaded', () => {
     const bigBagColors = {
       "Purge PE": "rgba(57, 255, 20, 0.9)",
       "Purge PVC": "rgba(255, 20, 147, 0.9)",
-      "Aiguillettes": "rgba(255, 105, 180, 0.8)"
+      "Aiguillettes": "rgba(255, 255, 255, 0.8)"
     };
 
     allBigBagTypes.forEach(type => {
