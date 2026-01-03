@@ -978,11 +978,11 @@
       </section>
 
       <section id="adminColorsSection">
-        <h3>Couleurs par type de déchet</h3>
+        <h3>Type de déchet + Couleur</h3>
         <ul id="colorList"></ul>
         <input type="text" id="newColorTypeInput" placeholder="Nom du type de déchet" aria-label="Nom du type de déchet" />
         <input type="color" id="newColorInput" value="#ff4d4d" aria-label="Sélecteur de couleur" />
-        <button id="addColorBtn" class="add-btn">Ajouter une couleur</button>
+        <button id="addColorBtn" class="add-btn">Ajouter un type de déchet</button>
       </section>
 
       <section id="adminBinsSection">
@@ -1084,7 +1084,7 @@
             <div class="card-title">Nouvelle pesée</div>
             <div class="card-sub">Sélectionner secteur, benne, puis saisir le poids brut.</div>
           </div>
-          <span class="badge badge-soft mono">STEP • 1</span>
+          <!-- Badge <span class="badge badge-soft mono">STEP • 1</span>-->
         </div>
 
         <form id="weightForm" autocomplete="off">
@@ -1272,11 +1272,11 @@
   const LS_COLORS = 'nexans_colors';
   const STORAGE_KEY = 'weightHistory_v1';
 
-  // Données par défaut
+  // Données par défaut des secteurs, types de déchets et tares
   const defaultSectors = {
       "Tréfilage": [
     { type: "Benne", name: "Alu Nu", tare: 194, label: "Alu Nu – 194 kg" },
-    { type: "Benne", name:"Feraille", tare: 553, label: "Ferraille – 553 kg" },
+    { type: "Benne", name:"Ferraille", tare: 553, label: "Ferraille – 553 kg" },
     { type: "Big Bag", name:"Aiguillettes",tare: 0, label: "Big Bag Aiguillettes" }
   ],
   "530": [
@@ -1309,7 +1309,7 @@
     { type: "Benne", name:"Alu Nu", tare: 212, label: "Alu Nu – 212 kg" },
     { type: "Benne", name:"Isolé", tare: 194, label: "Isolé – 194 kg" },
     { type: "Benne", name:"Alu Sous Plomb", tare: 220, label: "Alu Sous Plomb – 220 kg" },
-    { type: "Benne", name:"Feraille", tare: 196, label: "Ferraille – 196 kg" },
+    { type: "Benne", name:"Ferraille", tare: 196, label: "Ferraille – 196 kg" },
     { type: "Benne", name:"Armé", tare: 198, label: "Armé – 198 kg" }
   ],
   "Mono": [
@@ -1321,16 +1321,16 @@
     { type: "Benne", name:"Alu Nu", tare: 194, label: "Alu Nu – 194 kg" },
     { type: "Benne", name:"Alu Sous Plomb", tare: 230, label: "Alu Sous Plomb – 230 kg" },
     { type: "Benne", name:"Isolé", tare: 160, label: "Isolé – 160 kg" },
-    { type: "Benne", name:"Feraille", tare: 196, label: "Ferraille – 196 kg" }
+    { type: "Benne", name:"Ferraille", tare: 196, label: "Ferraille – 196 kg" }
   ],
   "153": [
-    { type: "Benne", name:"Feraille", tare: 160, label: "Ferraille – 160 kg" }
+    { type: "Benne", name:"Ferraille", tare: 160, label: "Ferraille – 160 kg" }
   ],
   "156": [
-    { type: "Benne", name:"Feraille", tare: 160, label: "Ferraille – 160 kg" }
+    { type: "Benne", name:"Ferraille", tare: 160, label: "Ferraille – 160 kg" }
   ],
   "Maintenance": [
-    { type: "Benne", name:"Feraille", tare: 240, label: "Ferraille – 240 kg" }
+    { type: "Benne", name:"Ferraille", tare: 240, label: "Ferraille – 240 kg" }
   ],
   "7712": [
     { type: "Benne", name: "Dépouille PE", tare: 146, label: "Dépouille PE – 146 kg" },
@@ -1358,7 +1358,7 @@
     { type: "Benne", name:"Armé", tare: 164, label: "Armé – 164 kg" }
   ],
   "Cellules": [
-    { type: "Benne", name:"Feraille", tare: 160, label: "Ferraille – 160 kg" },
+    { type: "Benne", name:"Ferraille", tare: 160, label: "Ferraille – 160 kg" },
     { type: "Benne", name: "Dépouille PVC", tare: 160, label: "Dépouille PVC – 160 kg" },
     { type: "Benne", name:"Isolé", tare: 160, label: "Isolé – 160 kg" },
     { type: "Benne", name:"Alu Nu", tare: 160, label: "Alu Nu – 160 kg" },
@@ -1387,6 +1387,7 @@
   ]
   };
 
+  // Types de déchets avec couleurs par default
   const defaultColorsByType = {
     "Alu Nu": "rgba(0, 128, 0, 0.8)",
     "Isolé": "rgba(0, 0, 255, 0.8)",
