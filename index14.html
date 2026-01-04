@@ -1399,7 +1399,7 @@
     "Dépouille Plomb": "rgba(255, 255, 255, 0.8)",
     "Purge PE": "rgba(57, 255, 20, 0.9)",
     "Purge PVC": "rgba(255, 20, 147, 0.9)",
-    "Aiguillettes": "rgba(255, 105, 180, 0.8)"
+    "Aiguillettes": "rgba(255, 255, 255, 1)"
   };
 
   // Chargement/sauvegarde localStorage
@@ -1663,6 +1663,9 @@ function refreshFiltersTypes() {
     filterTypeSelect.appendChild(option);
   });
 }
+
+//-------CONSOLE ADMINISTRATION --------------------------------------
+
 
 
 // Événement changement secteur dans console admin
@@ -2000,85 +2003,113 @@ document.getElementById('restoreBtn').addEventListener('click', () => {
     netWeightInput.value = gross > tare ? (gross - tare).toFixed(2) : 0;
   }
 
-  // Filtrage historique
-  function getFilteredHistory() {
-    const history = loadHistory();
-    const secFilter = filterSector.value;
-    const typeFilter = filterType.value;
-    const from = filterFrom.value ? new Date(filterFrom.value + 'T00:00:00') : null;
-    const to = filterTo.value ? new Date(filterTo.value + 'T23:59:59') : null;
 
-    return history.filter(entry => {
-      if (secFilter && entry.sector !== secFilter) return false;
-      if (typeFilter && entry.binType !== typeFilter) return false;
 
-      if (from || to) {
-        const d = new Date(entry.date);
-        if (from && d < from) return false;
-        if (to && d > to) return false;
-      }
+ // --------------TABLEAU HISTORIQUE DES PESEES -----------------------------------
 
-      return true;
-    });
-  }
+ // Filtrage historique
+function getFilteredHistory() {
+  const history = loadHistory();
+  const secFilter = filterSector.value;
+  const typeFilter = filterType.value;
+  const from = filterFrom.value ? new Date(filterFrom.value + 'T00:00:00') : null;
+  const to = filterTo.value ? new Date(filterTo.value + 'T23:59:59') : null;
 
-  // Rendu tableau historique
-  function renderTable() {
-    const rows = getFilteredHistory();
-    historyTableBody.innerHTML = '';
-    rows.forEach(entry => {
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td>${new Date(entry.date).toLocaleDateString('fr-FR')}</td>
-        <td>${entry.sector}</td>
-        <td>${entry.bin}</td>
-        <td>${entry.binType}</td>
-        <td>${entry.bigContainer || ''}</td>
-        <td class="mono">${entry.tare.toFixed(2)}</td>
-        <td class="mono">${entry.grossWeight.toFixed(2)}</td>
-        <td class="mono">${entry.netWeight.toFixed(2)}</td>
-        <td class="delete-cell" title="Supprimer cette ligne">✖</td>
-      `;
-      tr.querySelector('.delete-cell').addEventListener('click', () => {
-        deleteEntry(entry);
-      });
-      historyTableBody.appendChild(tr);
-    });
-  }
+  return history.filter(entry => {
+    if (secFilter && entry.sector !== secFilter) return false;
 
-  // Suppression entrée historique
-  function deleteEntry(entryToDelete) {
-    let history = loadHistory();
-    const index = history.findIndex(e =>
-      e.date === entryToDelete.date &&
-      e.sector === entryToDelete.sector &&
-      e.bin === entryToDelete.bin &&
-      e.binType === entryToDelete.binType &&
-      e.bigContainer === entryToDelete.bigContainer &&
-      e.tare === entryToDelete.tare &&
-      e.grossWeight === entryToDelete.grossWeight &&
-      e.netWeight === entryToDelete.netWeight
-    );
-    if (index > -1) {
-      history.splice(index, 1);
-      saveHistory(history);
-      renderTable();
-      refreshFiltersTypes();
-      refreshCharts();
-      showMessage("Entrée supprimée.");
+    if (typeFilter && typeFilter !== '') {
+      if (!entry.binType || entry.binType.toLowerCase() !== typeFilter.toLowerCase()) return false;
     }
-  }
 
+    if (from || to) {
+      const d = new Date(entry.date);
+      if (from && d < from) return false;
+      if (to && d > to) return false;
+    }
+
+    return true;
+  });
+}
+
+// Rendu tableau historique
+function renderTable() {
+  const rows = getFilteredHistory();
+  historyTableBody.innerHTML = '';
+  rows.forEach(entry => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${new Date(entry.date).toLocaleDateString('fr-FR')}</td>
+      <td>${entry.sector}</td>
+      <td>${entry.bin}</td>
+      <td>${entry.binType}</td>
+      <td>${entry.bigContainer || ''}</td>
+      <td class="mono">${entry.tare.toFixed(2)}</td>
+      <td class="mono">${entry.grossWeight.toFixed(2)}</td>
+      <td class="mono">${entry.netWeight.toFixed(2)}</td>
+      <td class="delete-cell" title="Supprimer cette ligne">✖</td>
+    `;
+    tr.querySelector('.delete-cell').addEventListener('click', () => {
+      deleteEntry(entry);
+    });
+    historyTableBody.appendChild(tr);
+  });
+}
+
+// Suppression entrée historique
+function deleteEntry(entryToDelete) {
+  let history = loadHistory();
+  const index = history.findIndex(e =>
+    e.date === entryToDelete.date &&
+    e.sector === entryToDelete.sector &&
+    e.bin === entryToDelete.bin &&
+    e.binType === entryToDelete.binType &&
+    e.bigContainer === entryToDelete.bigContainer &&
+    e.tare === entryToDelete.tare &&
+    e.grossWeight === entryToDelete.grossWeight &&
+    e.netWeight === entryToDelete.netWeight
+  );
+  if (index > -1) {
+    history.splice(index, 1);
+    saveHistory(history);
+    renderTable();
+    refreshFiltersTypes();
+    refreshCharts();
+    showMessage("Entrée supprimée.");
+  }
+}
+
+// Remplissage dynamique du filtre "type" à partir de defaultColorsByType
+function populateTypeFilterFromColors() {
+  const filterType = document.getElementById('filterType');
+  filterType.innerHTML = '<option value="">Tous les types</option>';
+
+  Object.keys(defaultColorsByType).sort().forEach(type => {
+    const option = document.createElement('option');
+    option.value = type;
+    option.textContent = type;
+    filterType.appendChild(option);
+  });
+}
+
+// Initialisation au chargement
 window.addEventListener('DOMContentLoaded', () => {
   const today = new Date().toISOString().split('T')[0];
   document.getElementById('filterFrom').value = today;
   document.getElementById('filterTo').value = today;
 
-  // Optionnel : lancer un premier rendu du tableau avec ce filtre par défaut
+  populateTypeFilterFromColors();
+
   renderTable();
+
+  ['filterSector', 'filterType', 'filterFrom', 'filterTo'].forEach(id => {
+    document.getElementById(id).addEventListener('change', () => {
+      renderTable();
+    });
+  });
 });
 
-
+// --------------PARTIE EXPORTATION PDF -----------------------------------
 
   // Calcul agrégats pour graphiques
   function computeAggregates() {
